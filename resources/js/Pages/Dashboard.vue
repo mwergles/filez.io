@@ -79,11 +79,18 @@ async function uploadFile ({ file }) {
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <NodeList
+                        v-if="nodes.length > 0"
                         :nodes="nodes"
                         @openFolder="navigateToNode"
                         @moveNode="moveNode"
                         @updated="fetchNodes"
                     />
+
+                    <div v-else class="p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                        <p class="text-gray-500 dark:text-gray-400">
+                            You don't have any files yet.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
