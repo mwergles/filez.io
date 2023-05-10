@@ -4,16 +4,19 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use \Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
+    use HasUlids;
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
@@ -58,4 +61,14 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    /**
+     * Get all of the nodes for the User
+     *
+     * @return HasMany
+     */
+    public function nodes(): HasMany
+    {
+        return $this->hasMany(Node::class);
+    }
 }
