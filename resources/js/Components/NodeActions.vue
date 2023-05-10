@@ -1,6 +1,6 @@
 <script setup>
 import DownloadFileButton from '@/Components/DownloadFileButton.vue'
-import DeleteFileButton from '@/Components/DeleteFileButton.vue'
+import DeleteNodeButton from '@/Components/DeleteNodeButton.vue'
 import RenameNodeButton from '@/Components/RenameNodeButton.vue'
 
 const props = defineProps({
@@ -33,9 +33,10 @@ async function deleteNode () {
         :node="node"
         @renameNode="renameNode"
     />
-    <DeleteFileButton
+    <DeleteNodeButton
         class="ml-6"
         v-if="node.type === 'file' || node.length === 0"
+        :node="node"
         @deleteNode="deleteNode"
     />
 </template>
