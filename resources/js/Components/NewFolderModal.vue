@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue'
+import { ref } from 'vue'
 import PrimaryButton from './PrimaryButton.vue'
 import DialogModal from './DialogModal.vue'
 
@@ -12,6 +12,11 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'createFolder']);
 const folderName = ref('');
+
+const createFolder = () => {
+    emit('createFolder', { name: folderName.value });
+    folderName.value = '';
+};
 </script>
 
 <template>
@@ -42,7 +47,7 @@ const folderName = ref('');
         </template>
 
         <template #footer>
-            <PrimaryButton @click="$emit('createFolder', { folderName })">
+            <PrimaryButton @click="createFolder">
                 Create
             </PrimaryButton>
         </template>

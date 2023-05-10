@@ -2,15 +2,13 @@
 import IconButton from './IconButton.vue'
 import DeleteIcon from '@icons/delete.svg'
 
-const deleteFile = () => {
-    console.log('Delete node')
-}
+const emit = defineEmits(['deleteNode'])
 </script>
 
 <template>
     <IconButton
         title="Delete"
-        @click="deleteFile"
+        @click="emit('deleteNode')"
     >
         <DeleteIcon />
     </IconButton>

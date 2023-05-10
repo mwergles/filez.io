@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import PrimaryButton from './PrimaryButton.vue'
 
+const emit = defineEmits(['upload'])
 const fileInput = ref(null)
 
 const selectFile = () => {
@@ -9,7 +10,8 @@ const selectFile = () => {
 }
 
 const uploadFiles = () => {
-    console.log(fileInput.value.files)
+    console.log('Upload files', fileInput.value.files[0])
+    emit('upload', { file: fileInput.value.files[0] })
 }
 </script>
 
@@ -18,7 +20,6 @@ const uploadFiles = () => {
         type="file"
         ref="fileInput"
         accept=".pdf,.doc,.docx.xls,.xlsx,.ppt,.pptx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
-        multiple
         hidden
         @change="uploadFiles"
     />

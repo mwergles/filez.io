@@ -3,11 +3,12 @@ import { ref } from 'vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import NewFolderModal from '@/Components/NewFolderModal.vue'
 
+const emit = defineEmits(['createFolder'])
 const showNewFolderModal = ref(false)
 
-const createFolder = ({ folderName }) => {
-    console.log(folderName)
+const createFolder = ({ name }) => {
     showNewFolderModal.value = false
+    emit('createFolder', { name })
 }
 </script>
 

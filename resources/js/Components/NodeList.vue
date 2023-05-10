@@ -1,75 +1,16 @@
 <script setup>
 import NodeIcon from '@/Components/NodeIcon.vue'
 import NodeActions from '@/Components/NodeActions.vue'
+import { formatBytes } from '@/lib/utils'
 
-const nodes = [
-    {
-        id: 1,
-        name: 'Foo',
-        type: 'folder',
-        lastModified: '',
-        size: '',
-        length: 3,
+const props = defineProps({
+    nodes: {
+        type: Array,
+        default: () => [],
     },
-    {
-        id: 2,
-        name: 'Bar',
-        type: 'folder',
-        lastModified: '',
-        size: '',
-        length: 2,
-    },
-    {
-        id: 3,
-        name: 'Baz',
-        type: 'folder',
-        lastModified: '',
-        size: '',
-        length: 0,
-    },
-    {
-        id: 4,
-        name: 'Foo',
-        type: 'file',
-        lastModified: '2021-08-01',
-        size: '1.2 MB',
-    },
-    {
-        id: 5,
-        name: 'Bar',
-        type: 'file',
-        lastModified: '2021-08-01',
-        size: '1.2 MB',
-    },
-    {
-        id: 6,
-        name: 'Baz',
-        type: 'file',
-        lastModified: '2021-08-01',
-        size: '1.2 MB',
-    },
-    {
-        id: 7,
-        name: 'Foo',
-        type: 'file',
-        lastModified: '2021-08-01',
-        size: '1.2 MB',
-    },
-    {
-        id: 8,
-        name: 'Bar',
-        type: 'file',
-        lastModified: '2021-08-01',
-        size: '1.2 MB',
-    },
-    {
-        id: 9,
-        name: 'Baz',
-        type: 'file',
-        lastModified: '2021-08-01',
-        size: '1.2 MB',
-    },
-]
+})
+
+const emit = defineEmits(['openFolder', 'moveNode', 'updated'])
 
 let nodeBeingMoved = null
 
@@ -78,11 +19,14 @@ const openFolder = ({ node }) => {
         return
     }
 
-    console.log('Open folder', node)
+    emit('openFolder', node)
 }
 
 const onDrop = ({ node }) => {
-    console.log('Drop', node, nodeBeingMoved)
+    emit('moveNode', {
+        node: nodeBeingMoved,
+        target: node,
+    })
 }
 
 const onDragOver = ({ node, $event }) => {
@@ -122,7 +66,7 @@ const onDragEnd = () => {
                         <tbody>
                         <tr
                             class="group border-b dark:border-neutral-500 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                            v-for="node in nodes"
+                            v-for="node in props.nodes"
                             :key="node.id"
                             draggable="true"
                             @dblclick="openFolder({ node })"
@@ -135,11 +79,14 @@ const onDragEnd = () => {
                                 <NodeIcon :node="node" />
                             </td>
                             <td class="whitespace-nowrap px-6 py-4 font-medium">{{ node.name }}</td>
-                            <td class="whitespace-nowrap px-6 py-4">{{ node.lastModified || '--' }}</td>
-                            <td class="whitespace-nowrap px-6 py-4">{{ node.size || '--' }}</td>
+                            <td class="whitespace-nowrap px-6 py-4">{{ node.last_modified || '--' }}</td>
+                            <td class="whitespace-nowrap px-6 py-4">{{ node.size ? formatBytes(node.size) : '--' }}</td>
                             <td class="whitespace-nowrap px-6 py-4">
                                 <div class="invisible group-hover:visible">
-                                    <NodeActions :node="node" />
+                                    <NodeActions
+                                        :node="node"
+                                        @updated="emit('updated')"
+                                    />
                                 </div>
                             </td>
                         </tr>

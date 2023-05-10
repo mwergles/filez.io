@@ -2,16 +2,23 @@
 import IconButton from './IconButton.vue'
 import DownloadIcon from '@icons/download.svg'
 
-const downloadFile = () => {
-    console.log('Download file')
-}
+const props = defineProps({
+    node: {
+        type: Object,
+        required: true,
+    },
+})
 </script>
 
 <template>
-    <IconButton
+    <a
         title="Download"
-        @click="downloadFile"
+        :href="node.url"
+        :download="node.name"
+        target="_blank"
     >
-        <DownloadIcon/>
-    </IconButton>
+        <IconButton>
+            <DownloadIcon/>
+        </IconButton>
+    </a>
 </template>
