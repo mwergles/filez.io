@@ -62,6 +62,40 @@ services:
             test: [ 'CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live' ]
             retries: 3
             timeout: 5s
+    createbucket:
+        image: 'minio/mc:latest'
+        depends_on:
+            minio:
+                condition: service_healthy
+        environment:
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_BUCKET: ${AWS_BUCKET}
+        entrypoint: >
+            /bin/sh -c "
+                /usr/bin/mc config host add minio http://minio:${FORWARD_MINIO_PORT:-9000} sail password;
+                /usr/bin/mc mb -p minio/${AWS_BUCKET};
+                /usr/bin/mc policy set download minio/${AWS_BUCKET};
+                /usr/bin/mc policy set public minio/${AWS_BUCKET};
+            "
+        networks:
+            - sail
+    nginx:
+        image: nginx:alpine
+        depends_on:
+            - laravel.test
+            - minio
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        networks:
+            sail:
+                aliases:
+                    - static.localhost
+        ports:
+            - '80:80'
+        volumes:
+            - ./ops/nginx.conf:/etc/nginx/conf.d/default.conf
+        restart: always
 networks:
     sail:
         driver: bridge
