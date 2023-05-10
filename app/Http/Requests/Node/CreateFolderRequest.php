@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Node;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -10,7 +10,7 @@ Class CreateFolderRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:80',
-            'targetId' => 'nullable|ulid'
+            'targetId' => 'nullable|ulid|exists:nodes,id,user_id,' . $this->user()->id,
         ];
     }
 }

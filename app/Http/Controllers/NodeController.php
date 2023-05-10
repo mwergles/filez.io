@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateFolderRequest;
-use App\Http\Requests\FileUploadRequest;
-use App\Http\Requests\MoveRequest;
-use App\Http\Requests\UpdateRequest;
+use App\Http\Requests\Node\CreateFolderRequest;
+use App\Http\Requests\Node\DeleteRequest;
+use App\Http\Requests\Node\FileUploadRequest;
+use App\Http\Requests\Node\IndexRequest;
+use App\Http\Requests\Node\MoveRequest;
+use App\Http\Requests\Node\UpdateRequest;
 use App\Http\Resources\ApiResource;
 use App\Services\NodeService;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NodeController extends Controller
@@ -28,7 +32,7 @@ class NodeController extends Controller
      * @param $parentId
      * @return ApiResource
      */
-    public function index(Request $request, $parentId = null): ApiResource
+    public function index(IndexRequest $request, $parentId = null): ApiResource
     {
         return new ApiResource(
             $this->service->listNodes($request->user()->id, $parentId)
@@ -55,37 +59,47 @@ class NodeController extends Controller
     /**
      * Create a new folder.
      * @param CreateFolderRequest $request
-     * @return ApiResource
+     * @return JsonResponse
      */
-    public function createFolder(CreateFolderRequest $request): ApiResource
+    public function createFolder(CreateFolderRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
-        return new ApiResource(
+        $resource = new ApiResource(
             $this->service->createFolder(
                 $request->user()->id,
                 $validated['name'],
-                $validated['targetId']
+                $validated['targetId'] ?? null
             )
         );
+
+        return $resource->response()->setStatusCode(201);
     }
 
     /**
      * Upload a new file.
      * @param FileUploadRequest $request
-     * @return ApiResource
+     * @return JsonResponse
      */
-    public function uploadFile(FileUploadRequest $request): ApiResource
+    public function uploadFile(FileUploadRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
-        return new ApiResource(
-            $this->service->uploadFile(
-                $request->user()->id,
-                $validated['file'],
-                $validated['targetId']
-            )
-        );
+        try {
+            $resource = new ApiResource(
+                $this->service->uploadFile(
+                    $request->user()->id,
+                    $validated['file'],
+                    $validated['targetId'] ?? null
+                )
+            );
+
+            return $resource->response()->setStatusCode(201);
+        } catch (\Exception $e) {
+            throw new HttpResponseException(
+                response()->json(['message' => $e->getMessage()], 500)
+            );
+        }
     }
 
     /**
@@ -109,10 +123,16 @@ class NodeController extends Controller
      * @param string $id
      * @return ApiResource
      */
-    public function destroy(Request $request, string $id): ApiResource
+    public function destroy(DeleteRequest $request, string $id): ApiResource
     {
-        return new ApiResource(
-            $this->service->deleteNode($request->user()->id, $id)
-        );
+        try {
+            return new ApiResource(
+                $this->service->deleteNode($request->user()->id, $id)
+            );
+        } catch (\Exception $e) {
+            throw new HttpResponseException(
+                response()->json(['message' => $e->getMessage()], 500)
+            );
+        }
     }
 }

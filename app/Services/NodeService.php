@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Enums\NodeType;
+use App\Exceptions\StorageException;
 use App\Models\Node;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -17,9 +19,9 @@ class NodeService
      * List all nodes of a user.
      * @param string $userId
      * @param string|null $parentId
-     * @return mixed
+     * @return Collection
      */
-    public function listNodes(string $userId, ?string $parentId = null)
+    public function listNodes(string $userId, ?string $parentId = null): Collection
     {
         $nodes = Node::where('user_id', $userId)
             ->where('parent_id', $parentId)
@@ -27,10 +29,10 @@ class NodeService
             ->orderBy('created_at')
             ->get();
 
-        $expirationTime = $this->getExpirationTime($userId);
+        $temporaryUrlExpirationTime = $this->getSessionRemainingTime($userId);
 
         foreach ($nodes as $node) {
-            $node->url = Storage::temporaryUrl($node->id, $expirationTime, [
+            $node->url = Storage::temporaryUrl($node->id, $temporaryUrlExpirationTime, [
                 'ResponseContentType' => $node->mime_type,
                 'ResponseContentDisposition' => "attachment; filename=$node->name",
             ]);
@@ -39,19 +41,30 @@ class NodeService
         return $nodes;
     }
 
-
     /**
      * Move a node to a new parent.
      * @param string $userId
      * @param string $nodeId
      * @param string $targetId
-     * @return int
+     * @return Node
      */
-    public function moveNode(string $userId, string $nodeId, string $targetId): int
+    public function moveNode(string $userId, string $nodeId, string $targetId): Node
     {
-        return Node::where('user_id', $userId)
+        $targetNode = Node::where('user_id', $userId)
+            ->where('id', $targetId)
+            ->first();
+
+        if ($targetNode->type !== NodeType::FOLDER->value) {
+            abort(400, 'Target node is not a folder.');
+        }
+
+        Node::where('user_id', $userId)
             ->where('id', $nodeId)
             ->update(['parent_id' => $targetId]);
+
+        return Node::where('user_id', $userId)
+            ->where('id', $nodeId)
+            ->first();
     }
 
     /**
@@ -76,9 +89,9 @@ class NodeService
      * @param string $userId
      * @param UploadedFile $file
      * @param string|null $targetId
-     * @return int
+     * @return Node
      */
-    public function uploadFile(string $userId, UploadedFile $file, ?string $targetId = null): int
+    public function uploadFile(string $userId, UploadedFile $file, ?string $targetId = null): Node
     {
         return DB::transaction(function () use ($userId, $file, $targetId) {
             $node = Node::create([
@@ -91,7 +104,7 @@ class NodeService
             ]);
 
             if (!Storage::put($node->id, $file->getContent())) {
-                abort(500);
+                throw new StorageException('Could not store file');
             }
 
             return $node;
@@ -103,13 +116,17 @@ class NodeService
      * @param string $userId
      * @param string $nodeId
      * @param string $name
-     * @return int
+     * @return Node
      */
-    public function updateNode(string $userId, string $nodeId, string $name): int
+    public function updateNode(string $userId, string $nodeId, string $name): Node
     {
-        return Node::where('user_id', $userId)
+        Node::where('user_id', $userId)
             ->where('id', $nodeId)
             ->update(['name' => $name]);
+
+        return Node::where('user_id', $userId)
+            ->where('id', $nodeId)
+            ->first();
     }
 
     /**
@@ -118,19 +135,15 @@ class NodeService
      * @param string $nodeId
      * @return Node
      */
-    public function deleteNode(string $userId, string $nodeId): int
+    public function deleteNode(string $userId, string $nodeId): Node
     {
         $node = Node::where('id', $nodeId)
             ->where('user_id', $userId)
             ->first();
 
-        if (!$node) {
-            abort(404);
-        }
-
         return DB::transaction(function () use ($node) {
             if (!Storage::delete($node->id)) {
-                abort(500);
+                throw new StorageException('Could not delete node');
             }
 
             $node->delete();
@@ -144,14 +157,13 @@ class NodeService
      * @param string $userId
      * @return Carbon
      */
-    private function getExpirationTime(string $userId): Carbon
+    private function getSessionRemainingTime(string $userId): Carbon
     {
         $session = DB::table('sessions')
             ->where('user_id', '=', $userId)
             ->get('last_activity');
 
         $sessionLifeTime = Config::get('session.lifetime') * 60;
-
         $remainingSessionTime = $session->first()->last_activity + $sessionLifeTime - time();
 
         return now()->addSeconds($remainingSessionTime);
