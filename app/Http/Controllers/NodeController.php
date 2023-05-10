@@ -10,6 +10,7 @@ use App\Http\Requests\Node\MoveRequest;
 use App\Http\Requests\Node\UpdateRequest;
 use App\Http\Resources\ApiResource;
 use App\Services\NodeService;
+use App\Exceptions\StorageException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -95,7 +96,7 @@ class NodeController extends Controller
             );
 
             return $resource->response()->setStatusCode(201);
-        } catch (\Exception $e) {
+        } catch (StorageException $e) {
             throw new HttpResponseException(
                 response()->json(['message' => $e->getMessage()], 500)
             );
@@ -119,7 +120,7 @@ class NodeController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * @param Request $request
+     * @param DeleteRequest $request
      * @param string $id
      * @return ApiResource
      */
@@ -129,7 +130,7 @@ class NodeController extends Controller
             return new ApiResource(
                 $this->service->deleteNode($request->user()->id, $id)
             );
-        } catch (\Exception $e) {
+        } catch (StorageException $e) {
             throw new HttpResponseException(
                 response()->json(['message' => $e->getMessage()], 500)
             );

@@ -89,6 +89,7 @@ class NodeService
      * @param string $userId
      * @param UploadedFile $file
      * @param string|null $targetId
+     * @throws StorageException
      * @return Node
      */
     public function uploadFile(string $userId, UploadedFile $file, ?string $targetId = null): Node
@@ -133,6 +134,7 @@ class NodeService
      * Delete a node.
      * @param string $userId
      * @param string $nodeId
+     * @throws StorageException
      * @return Node
      */
     public function deleteNode(string $userId, string $nodeId): Node
