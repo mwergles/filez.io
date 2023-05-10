@@ -1,6 +1,6 @@
 <script setup>
 import FolderIcon from '@icons/folder.svg'
-import FileIcon from '@icons/file-color.svg'
+import FileIcon from '@/Components/FileIcon.vue'
 
 const props = defineProps({
     node: {
@@ -18,5 +18,6 @@ const props = defineProps({
     <FileIcon
         class="h-8 inline-block"
         v-if="node.type === 'file'"
+        :node="node"
     />
 </template>

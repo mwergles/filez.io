@@ -60,7 +60,7 @@ const onDragEnd = () => {
                             <th scope="col" class="px-6 py-4">Name</th>
                             <th scope="col" class="px-6 py-4">Last modified</th>
                             <th scope="col" class="px-6 py-4">Size</th>
-                            <th scope="col" class="px-6 py-4"></th>
+                            <th scope="col" class="px-2 py-4"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -81,11 +81,12 @@ const onDragEnd = () => {
                             <td class="whitespace-nowrap px-6 py-4 font-medium">{{ node.name }}</td>
                             <td class="whitespace-nowrap px-6 py-4">{{ node.last_modified || '--' }}</td>
                             <td class="whitespace-nowrap px-6 py-4">{{ node.size ? formatBytes(node.size) : '--' }}</td>
-                            <td class="whitespace-nowrap px-6 py-4">
-                                <div class="invisible group-hover:visible">
+                            <td class="whitespace-nowrap px-2 py-4">
+                                <div class="group-hover:visible">
                                     <NodeActions
                                         :node="node"
                                         @updated="emit('updated')"
+                                        @moveNode="emit('moveNode', { node })"
                                     />
                                 </div>
                             </td>

@@ -18,19 +18,17 @@ async function fetchNodes (node = null) {
 }
 
 async function navigateToNode (node) {
-    console.log('Navigate to node', node, node.id)
     currentNode.value = node
     await fetchNodes(node)
 }
 
 async function moveNode({ node, target }) {
-    console.log('Move node', node, 'to', target)
     await axios.patch(`/api/node/move/`, {
         nodeId: node.id,
-        targetId: target.id,
+        targetId: target?.id,
     })
 
-    await fetchNodes(currentNode.value)
+    await fetchNodes(target ? currentNode.value : node.parent_id)
 }
 
 async function createFolder ({ name }) {

@@ -31,7 +31,7 @@ const createFolder = () => {
         </template>
 
         <template #content>
-            <form>
+            <form @submit.prevent="createFolder">
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                         Folder Name
