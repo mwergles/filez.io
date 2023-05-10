@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::get('/node/{parentId?}', [NodeController::class, 'index'])
+        ->whereUlid('parentId');
+
+    Route::post('/node/folder', [NodeController::class, 'createFolder']);
+
+    Route::post('/node/file', [NodeController::class, 'uploadFile']);
+
+    Route::patch('/node/move/', [NodeController::class, 'move']);
+
+    Route::patch('/node/{id}', [NodeController::class, 'update'])
+        ->whereUlid('id');
+
+    Route::delete('/node/{id}', [NodeController::class, 'destroy'])
+        ->whereUlid('id');
+
 });
