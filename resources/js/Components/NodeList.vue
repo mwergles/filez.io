@@ -1,4 +1,6 @@
 <script setup>
+import { computed, reactive } from 'vue'
+import Draggable from 'vuedraggable'
 import NodeIcon from '@/Components/NodeIcon.vue'
 import NodeActions from '@/Components/NodeActions.vue'
 import { formatBytes } from '@/lib/utils'
@@ -12,7 +14,16 @@ const props = defineProps({
 
 const emit = defineEmits(['openFolder', 'moveNode', 'updated'])
 
+const state = reactive({
+    nodeList: props.nodes,
+    draggingId: null,
+    isHoveringFolder: false,
+})
+
+const isValidDropTarget = computed(() => state.draggingId && state.isHoveringFolder)
+
 let nodeBeingMoved = null
+let targetNode = null
 
 const openFolder = ({ node }) => {
     if (node.type !== 'folder' || node.length === 0) {
@@ -22,28 +33,47 @@ const openFolder = ({ node }) => {
     emit('openFolder', node)
 }
 
-const onDrop = ({ node }) => {
-    emit('moveNode', {
-        node: nodeBeingMoved,
-        target: node,
-    })
+const onStart = (context) => {
+    nodeBeingMoved = state.nodeList[context.oldIndex]
+    state.draggingId = nodeBeingMoved.id
 }
 
-const onDragOver = ({ node, $event }) => {
-    if (node.type !== 'folder') {
+const onEnd = () => {
+    if (!targetNode) {
+        resetState()
         return
     }
 
-    $event.preventDefault()
-    $event.dataTransfer.dropEffect = 'move'
+    emit('moveNode', {
+        node: nodeBeingMoved,
+        target: targetNode,
+    })
+
+    resetState()
 }
 
-const onDragStart = ({ node }) => {
-    nodeBeingMoved = node
+const onMove = (context) => {
+    const { relatedContext } = context
+    const { element: nodeBeingHovered } = relatedContext
+
+    state.isHoveringFolder = nodeBeingHovered.type === 'folder'
+
+    if (!state.isHoveringFolder) {
+        targetNode = null
+        return false
+    }
+
+    targetNode = nodeBeingHovered
+
+    // prevents draggable default behaviour
+    return false
 }
 
-const onDragEnd = () => {
+const resetState = () => {
     nodeBeingMoved = null
+    targetNode = null
+    state.isHoveringFolder = false
+    state.draggingId = null
 }
 </script>
 
@@ -58,40 +88,48 @@ const onDragEnd = () => {
                         <tr>
                             <th scope="col" class="pl-6 py-4"></th>
                             <th scope="col" class="px-6 py-4">Name</th>
-                            <th scope="col" class="px-6 py-4">Last modified</th>
                             <th scope="col" class="px-6 py-4">Size</th>
                             <th scope="col" class="px-2 py-4"></th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr
-                            class="group border-b dark:border-neutral-500 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                            v-for="node in props.nodes"
-                            :key="node.id"
-                            draggable="true"
-                            @dblclick="openFolder({ node })"
-                            @dragover="onDragOver({ node, $event })"
-                            @drop="onDrop({ node })"
-                            @dragstart="onDragStart({ node })"
-                            @dragend="onDragEnd"
+                        <Draggable
+                            tag="tbody"
+                            :model-value="nodes"
+                            item-key="id"
+                            :move="onMove"
+                            :sort="true"
+                            @start="onStart"
+                            @end="onEnd"
+                            ghost-class="ghost"
+                            :class="{ 'cursor-no-drop': isValidDropTarget }"
                         >
-                            <td class="pl-6 py-4">
-                                <NodeIcon :node="node" />
-                            </td>
-                            <td class="whitespace-nowrap px-6 py-4 font-medium">{{ node.name }}</td>
-                            <td class="whitespace-nowrap px-6 py-4">{{ node.last_modified || '--' }}</td>
-                            <td class="whitespace-nowrap px-6 py-4">{{ node.size ? formatBytes(node.size) : '--' }}</td>
-                            <td class="whitespace-nowrap px-2 py-4">
-                                <div class="group-hover:visible">
-                                    <NodeActions
-                                        :node="node"
-                                        @updated="emit('updated')"
-                                        @moveNode="emit('moveNode', { node })"
-                                    />
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
+                            <template #item="{ element: node }">
+                                <tr
+                                    class="group border-b dark:border-neutral-500 cursor-grab hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                    :class="{
+                                        dragging: state.draggingId && state.draggingId === node.id,
+                                        'cursor-no-drop': isValidDropTarget,
+                                    }"
+                                    v-dbltap="() => openFolder({ node })"
+                                    @dblclick="openFolder({ node })"
+                                >
+                                    <td class="pl-6 py-4">
+                                        <NodeIcon :node="node" />
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4 font-medium">{{ node.name }}</td>
+                                    <td class="whitespace-nowrap px-6 py-4">{{ node.size ? formatBytes(node.size) : '--' }}</td>
+                                    <td class="whitespace-nowrap px-2 py-4">
+                                        <div class="group-hover:visible">
+                                            <NodeActions
+                                                :node="node"
+                                                @updated="emit('updated')"
+                                                @moveNode="emit('moveNode', { node })"
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </Draggable>
                     </table>
                 </div>
             </div>

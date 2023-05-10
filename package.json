@@ -17,5 +17,8 @@
         "vite": "4.3.5",
         "vite-svg-loader": "4.0.0",
         "vue": "3.2.47"
+    },
+    "dependencies": {
+        "vuedraggable": "^4.1.0"
     }
 }

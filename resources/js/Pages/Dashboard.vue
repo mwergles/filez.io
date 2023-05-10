@@ -4,6 +4,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import NodeList from '@/Components/NodeList.vue';
 import UploadButton from '@/Components/UploadButton.vue'
 import NewFolderButton from '@/Components/NewFolderButton.vue'
+import nodeApi from '@/api/node'
 
 const currentNode = ref(null)
 const nodes = ref([])
@@ -13,8 +14,7 @@ onMounted(async () => {
 })
 
 async function fetchNodes (node = null) {
-    const { data } = await axios.get(`/api/node/${node?.id ?? ''}`)
-    nodes.value = data.data
+    nodes.value = await nodeApi.getNodes({ node })
 }
 
 async function navigateToNode (node) {
@@ -23,36 +23,21 @@ async function navigateToNode (node) {
 }
 
 async function moveNode({ node, target }) {
-    await axios.patch(`/api/node/move/`, {
-        nodeId: node.id,
-        targetId: target?.id,
-    })
-
+    await nodeApi.moveNode({ node, target })
     await fetchNodes(target ? currentNode.value : node.parent_id)
 }
 
 async function createFolder ({ name }) {
     const targetId = currentNode.value?.id ?? null
-    await axios.post(`/api/node/folder`, { name, targetId })
+
+    await nodeApi.createFolder({ name, targetId })
     await fetchNodes(currentNode.value)
 }
 
 async function uploadFile ({ file }) {
     const targetId = currentNode.value?.id ?? null
 
-    const formData = new FormData()
-    formData.append('file', file)
-
-    if (targetId) {
-        formData.append('targetId', targetId)
-    }
-
-    await axios.post(`/api/node/file`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        }
-    })
-
+    await nodeApi.uploadFile({ file, targetId })
     await fetchNodes(currentNode.value)
 }
 </script>
@@ -81,7 +66,6 @@ async function uploadFile ({ file }) {
                         :nodes="nodes"
                         @openFolder="navigateToNode"
                         @moveNode="moveNode"
-                        @updated="fetchNodes"
                     />
 
                     <div v-else class="p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">

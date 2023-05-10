@@ -3,7 +3,7 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import svgLoader from 'vite-svg-loader';
 
-const path = require('path')
+const path = require('node:path')
 
 export default defineConfig({
     resolve: {
