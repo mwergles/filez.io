@@ -79,10 +79,11 @@ class NodeTest extends TestCase
 
     public function test_nodes_can_be_moved_to_a_new_parent_folder()
     {
+        $this->withoutExceptionHandling();
         $this->actingAs($user = User::factory()->create());
 
         $parentNode = $user->nodes()->create([
-            'name' => 'Test Node',
+            'name' => 'Parent Node',
             'type' => 'folder',
         ]);
 

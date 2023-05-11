@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Node\AncestorsRequest;
 use App\Http\Requests\Node\CreateFolderRequest;
 use App\Http\Requests\Node\DeleteRequest;
 use App\Http\Requests\Node\FileUploadRequest;
@@ -13,7 +14,6 @@ use App\Services\NodeService;
 use App\Exceptions\StorageException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class NodeController extends Controller
 {
@@ -29,7 +29,7 @@ class NodeController extends Controller
 
     /**
      * Display a listing of the resource.
-     * @param Request $request
+     * @param IndexRequest $request
      * @param $parentId
      * @return ApiResource
      */
@@ -41,20 +41,40 @@ class NodeController extends Controller
     }
 
     /**
+     * Return the parents list of a node.
+     * @param AncestorsRequest $request
+     * @param $id
+     * @return ApiResource
+     */
+    public function getNodeAncestors(AncestorsRequest $request, $id): ApiResource
+    {
+        return new ApiResource(
+            $this->service->getNodeAncestors($id, $request->user()->id)
+        );
+    }
+
+    /**
      * Move a node to a new parent.
      * @param MoveRequest $request
      * @return ApiResource
      */
-    public function move(MoveRequest $request): ApiResource
+    public function moveNode(MoveRequest $request): ApiResource
     {
         $validated = $request->validated();
 
-        return new ApiResource(
-            $this->service->moveNode($request->user()->id,
-                $validated['nodeId'],
-                $validated['targetId']
-            )
-        );
+        try {
+            return new ApiResource(
+                $this->service->moveNode($request->user()->id,
+                    $validated['nodeId'],
+                    $validated['targetId'] ?? null
+                )
+            );
+        } catch (\InvalidArgumentException $e) {
+            throw new HttpResponseException(
+                response()->json(['message' => $e->getMessage()], 400)
+            );
+        }
+
     }
 
     /**

@@ -5,19 +5,19 @@ namespace App\Http\Requests\Node;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Route;
 
-Class IndexRequest extends FormRequest
+Class AncestorsRequest extends FormRequest
 {
     public function rules(): array
     {
         return [
-            'parentId' => 'nullable|ulid|exists:nodes,id,user_id,' . $this->user()->id,
+            'id' => 'required|ulid|exists:nodes,id,user_id,' . $this->user()->id,
         ];
     }
 
     public function validationData(): array
     {
         return array_merge($this->request->all(), [
-            'parentId' => Route::input('id'),
+            'id' => Route::input('id'),
         ]);
     }
 }

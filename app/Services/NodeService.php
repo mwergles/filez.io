@@ -25,7 +25,7 @@ class NodeService
     {
         $nodes = Node::where('user_id', $userId)
             ->where('parent_id', $parentId)
-            ->orderByRaw('CASE type WHEN \'' . NodeType::FOLDER->value . '\' THEN 1 ELSE 2 END')
+            ->orderByRaw('CASE WHEN type = ? THEN 1 ELSE 2 END', [NodeType::FOLDER->value])
             ->orderBy('created_at')
             ->get();
 
@@ -45,26 +45,25 @@ class NodeService
      * Move a node to a new parent.
      * @param string $userId
      * @param string $nodeId
-     * @param string $targetId
+     * @param string|null $targetId
      * @return Node
      */
-    public function moveNode(string $userId, string $nodeId, string $targetId): Node
+    public function moveNode(string $userId, string $nodeId, ?string $targetId = null): Node
     {
-        $targetNode = Node::where('user_id', $userId)
-            ->where('id', $targetId)
-            ->first();
+        $node = $this->getNode($nodeId, $userId);
 
-        if ($targetNode->type !== NodeType::FOLDER->value) {
-            abort(400, 'Target node is not a folder.');
+        // If the target is null, we move the node to the parent's parent
+        // in other words, we move the node up one level
+        $targetNode = $targetId ? $this->getNode($targetId, $userId) : $node->parent?->parent;
+
+        if ($targetNode && $targetNode->type !== NodeType::FOLDER->value) {
+            throw new \InvalidArgumentException('Target node is not a folder.');
         }
 
-        Node::where('user_id', $userId)
-            ->where('id', $nodeId)
-            ->update(['parent_id' => $targetId]);
+        $node->parent_id = $targetNode?->id;
+        $node->save();
 
-        return Node::where('user_id', $userId)
-            ->where('id', $nodeId)
-            ->first();
+        return $node;
     }
 
     /**
@@ -121,13 +120,12 @@ class NodeService
      */
     public function updateNode(string $userId, string $nodeId, string $name): Node
     {
-        Node::where('user_id', $userId)
-            ->where('id', $nodeId)
-            ->update(['name' => $name]);
+        $node = $this->getNode($nodeId, $userId);
 
-        return Node::where('user_id', $userId)
-            ->where('id', $nodeId)
-            ->first();
+        $node->name = $name;
+        $node->save();
+
+        return $node;
     }
 
     /**
@@ -139,12 +137,12 @@ class NodeService
      */
     public function deleteNode(string $userId, string $nodeId): Node
     {
-        $node = Node::where('id', $nodeId)
-            ->where('user_id', $userId)
-            ->first();
+        $node = $this->getNode($nodeId, $userId);
 
         return DB::transaction(function () use ($node) {
-            if (!Storage::delete($node->id)) {
+            $deleted = Storage::delete($node->id);
+
+            if (!$deleted) {
                 throw new StorageException('Could not delete node');
             }
 
@@ -155,18 +153,58 @@ class NodeService
     }
 
     /**
+     * @param string $userId
+     * @param string $nodeId
+     * @return array
+     */
+    public function getNodeAncestors (string $nodeId, string $userId): array
+    {
+        $query = <<<EOT
+WITH RECURSIVE parent_hierarchy AS (
+    SELECT id, parent_id, name
+    FROM nodes
+    WHERE
+        id = ?
+        AND user_id = ?
+    UNION ALL
+    SELECT t.id, t.parent_id, t.name
+    FROM nodes t
+    INNER JOIN parent_hierarchy ph ON t.id = ph.parent_id AND t.user_id = ?
+)
+SELECT id, name
+FROM parent_hierarchy
+ORDER BY id
+EOT;
+
+        return DB::select($query, [$nodeId, $userId, $userId]);
+    }
+
+    /**
+     * Get the node of a user by id.
+     * @param string $id
+     * @param string $userId
+     * @return mixed
+     */
+    private function getNode(string $id, string $userId): mixed
+    {
+        return Node::where('id', $id)
+            ->where('user_id', $userId)
+            ->first();
+    }
+
+    /**
      * Get the expiration time of the session.
      * @param string $userId
      * @return Carbon
      */
     private function getSessionRemainingTime(string $userId): Carbon
     {
-        $session = DB::table('sessions')
+        $sessionLastActivity = DB::table('sessions')
             ->where('user_id', '=', $userId)
-            ->get('last_activity');
+            ->value('last_activity');
 
         $sessionLifeTime = Config::get('session.lifetime') * 60;
-        $remainingSessionTime = $session->first()->last_activity + $sessionLifeTime - time();
+        $remainingSessionTime = $sessionLastActivity + $sessionLifeTime - time();
 
         return now()->addSeconds($remainingSessionTime);
     }

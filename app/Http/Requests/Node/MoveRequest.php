@@ -11,7 +11,7 @@ Class MoveRequest extends FormRequest
     {
         return [
             'nodeId' => 'required|ulid|exists:nodes,id,user_id,' . $this->user()->id,
-            'targetId' => 'required|ulid'
+            'targetId' => 'nullable|ulid'
         ];
     }
 }
