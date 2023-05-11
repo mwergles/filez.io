@@ -14,7 +14,13 @@ docker run --rm \
     -v "$(pwd)":/opt \
     -w /opt \
     laravelsail/php82-composer:latest \
-    bash -c "composer install"
+    bash -c "
+    composer install && \
+    php artisan key:generate && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs && \
+    npm install && \
+    npm run build \
+    "
 
 ./vendor/bin/sail build
 
