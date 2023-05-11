@@ -1,6 +1,9 @@
 <script setup>
+import useNode from '@/composables/node'
 import IconButton from './IconButton.vue'
 import MoveNodeUpIcon from '@icons/move-up.svg'
+
+const { moveNode } = useNode()
 
 const props = defineProps({
     node: {
@@ -8,15 +11,13 @@ const props = defineProps({
         required: true,
     },
 })
-
-const emit = defineEmits(['moveNode'])
 </script>
 
 <template>
     <span>
         <IconButton
             title="Move up"
-            @click="emit('moveNode')"
+            @click="moveNode({ node })"
         >
         <MoveNodeUpIcon/>
     </IconButton>

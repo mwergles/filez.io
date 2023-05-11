@@ -1,14 +1,17 @@
 <script setup>
 import { ref } from 'vue'
+import useNode from '@/composables/node'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import NewFolderModal from '@/Components/NewFolderModal.vue'
+
+const { createFolder: _createFolder } = useNode()
 
 const emit = defineEmits(['createFolder'])
 const showNewFolderModal = ref(false)
 
 const createFolder = ({ name }) => {
     showNewFolderModal.value = false
-    emit('createFolder', { name })
+    _createFolder({ name })
 }
 </script>
 

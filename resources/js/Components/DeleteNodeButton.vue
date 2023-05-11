@@ -1,8 +1,11 @@
 <script setup>
 import { ref } from 'vue'
+import useNode from '@/composables/node'
 import IconButton from './IconButton.vue'
 import DeleteIcon from '@icons/delete.svg'
 import DeleteNodeModal from '@/Components/DeleteNodeModal.vue'
+
+const { deleteNode } = useNode()
 
 const props = defineProps({
     node: {
@@ -12,7 +15,6 @@ const props = defineProps({
 })
 
 const showDeleteNodeModal = ref(false)
-const emit = defineEmits(['deleteNode'])
 </script>
 
 <template>
@@ -25,10 +27,10 @@ const emit = defineEmits(['deleteNode'])
     </IconButton>
 
     <DeleteNodeModal
-        :node="props.node"
+        :node="node"
         :show="showDeleteNodeModal"
         @close="showDeleteNodeModal = false"
-        @deleteNode="emit('deleteNode')"
+        @deleteNode="deleteNode({ node })"
     />
     </span>
 </template>

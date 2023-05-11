@@ -1,6 +1,6 @@
 export default {
-    async getNodes ({ node = {} }) {
-        const { data } = await axios.get(`/api/node/${node?.id ?? ''}`)
+    async getNodes ({ nodeId = null }) {
+        const { data } = await axios.get(`/api/node/${nodeId ?? ''}`)
 
         return data.data
     },
@@ -36,4 +36,22 @@ export default {
 
         return data.data
     },
+
+    async getPath ({ nodeId }) {
+        const { data } = await axios.get(`/api/node/path/${nodeId ?? ''}`)
+
+        return data.data
+    },
+
+    async renameNode ({ nodeId, name }) {
+        const { data } = await axios.patch(`/api/node/${nodeId}`, { name })
+
+        return data.data
+    },
+
+    async deleteNode ({ nodeId }) {
+        const { data } = await axios.delete(`/api/node/${nodeId}`)
+
+        return data.data
+    }
 }

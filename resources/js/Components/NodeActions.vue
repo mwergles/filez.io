@@ -10,18 +10,6 @@ const props = defineProps({
         required: true,
     },
 })
-
-const emit = defineEmits(['updated', 'moveNode'])
-
-async function renameNode ({ newNodeName }) {
-    await axios.patch(`/api/node/${props.node.id}`, { name: newNodeName })
-    emit('updated')
-}
-
-async function deleteNode () {
-    await axios.delete(`/api/node/${props.node.id}`)
-    emit('updated')
-}
 </script>
 
 <template>
@@ -32,18 +20,15 @@ async function deleteNode () {
     <RenameNodeButton
         class="ml-6"
         :node="node"
-        @renameNode="renameNode"
     />
     <MoveNodeUpButton
         v-if="node.parent_id"
         class="ml-6"
         :node="node"
-        @moveNode="emit('moveNode')"
     />
     <DeleteNodeButton
         v-if="node.type === 'file' || node.length === 0"
         class="ml-6"
         :node="node"
-        @deleteNode="deleteNode"
     />
 </template>

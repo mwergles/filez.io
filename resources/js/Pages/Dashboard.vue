@@ -1,60 +1,34 @@
 <script setup>
-import { onMounted, ref } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import NodeList from '@/Components/NodeList.vue';
 import UploadButton from '@/Components/UploadButton.vue'
 import NewFolderButton from '@/Components/NewFolderButton.vue'
-import nodeApi from '@/api/node'
+import Breadcumb from '@/Components/Breadcumb.vue'
+import EmptyDirectory from '@/Components/EmptyDirectory.vue'
+import useNode from '@/composables/node'
+import useNavigation from '@/composables/navigation'
 
-const currentNode = ref(null)
-const nodes = ref([])
+useNavigation()
 
-onMounted(async () => {
-    await fetchNodes()
-})
+const {
+    nodes,
+    path,
+    moveNode,
+} = useNode()
 
-async function fetchNodes (node = null) {
-    nodes.value = await nodeApi.getNodes({ node })
-}
-
-async function navigateToNode (node) {
-    currentNode.value = node
-    await fetchNodes(node)
-}
-
-async function moveNode({ node, target }) {
-    await nodeApi.moveNode({ node, target })
-    await fetchNodes(target ? currentNode.value : node.parent_id)
-}
-
-async function createFolder ({ name }) {
-    const targetId = currentNode.value?.id ?? null
-
-    await nodeApi.createFolder({ name, targetId })
-    await fetchNodes(currentNode.value)
-}
-
-async function uploadFile ({ file }) {
-    const targetId = currentNode.value?.id ?? null
-
-    await nodeApi.uploadFile({ file, targetId })
-    await fetchNodes(currentNode.value)
-}
+console.log(nodes.value)
 </script>
 
 <template>
     <AppLayout title="Dashboard">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Filez.io
-                <span v-if="currentNode">
-                    / {{ currentNode.name }}
-                </span>
+                <Breadcumb />
             </h2>
 
             <section class="mt-10">
-                <UploadButton @upload="uploadFile" />
-                <NewFolderButton @createFolder="createFolder" />
+                <UploadButton />
+                <NewFolderButton />
             </section>
         </template>
 
@@ -63,16 +37,9 @@ async function uploadFile ({ file }) {
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <NodeList
                         v-if="nodes.length > 0"
-                        :nodes="nodes"
-                        @openFolder="navigateToNode"
                         @moveNode="moveNode"
                     />
-
-                    <div v-else class="p-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                        <p class="text-gray-500 dark:text-gray-400">
-                            You don't have any files yet.
-                        </p>
-                    </div>
+                    <EmptyDirectory v-else />
                 </div>
             </div>
         </div>

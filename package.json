@@ -19,6 +19,6 @@
         "vue": "3.2.47"
     },
     "dependencies": {
-        "vuedraggable": "^4.1.0"
+        "vuedraggable": "4.1.0"
     }
 }

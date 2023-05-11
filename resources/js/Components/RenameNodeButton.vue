@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from 'vue'
+import useNode from '@/composables/node'
 import IconButton from './IconButton.vue'
 import EditIcon from '@icons/edit.svg'
 import RenameNodeModal from '@/Components/RenameNodeModal.vue'
 
-const showRenameNodeModal = ref(false)
+const { renameNode: _renameNode } = useNode()
 
-const emit = defineEmits(['renameNode'])
+const showRenameNodeModal = ref(false)
 
 const props = defineProps({
     node: {
@@ -22,7 +23,7 @@ const renameNode = ({ newNodeName }) => {
         return
     }
 
-    emit('renameNode', { newNodeName })
+    _renameNode({ node: props.node, newNodeName })
 }
 </script>
 
@@ -37,7 +38,7 @@ const renameNode = ({ newNodeName }) => {
 
         <RenameNodeModal
             :show="showRenameNodeModal"
-            :node="props.node"
+            :node="node"
             @close="showRenameNodeModal = false"
             @renameNode="renameNode"
         />
