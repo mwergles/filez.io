@@ -156,30 +156,27 @@ class NodeService
     }
 
     /**
-     * @param string $userId
+     * Get the ancestors of a node.
      * @param string $nodeId
+     * @param string $userId
      * @return array
      */
     public function getNodeAncestors(string $nodeId, string $userId): array
     {
-        $query = <<<EOT
-WITH RECURSIVE parent_hierarchy AS (
-    SELECT id, parent_id, name
-    FROM nodes
-    WHERE
-        id = ?
-        AND user_id = ?
-    UNION ALL
-    SELECT t.id, t.parent_id, t.name
-    FROM nodes t
-    INNER JOIN parent_hierarchy ph ON t.id = ph.parent_id AND t.user_id = ?
-)
-SELECT id, name
-FROM parent_hierarchy
-ORDER BY id
-EOT;
+        $node = $this->getNode($nodeId, $userId);
 
-        return DB::select($query, [$nodeId, $userId, $userId]);
+        $ancestors = [];
+        $currentNode = $node;
+        while ($currentNode->parent) {
+            array_unshift($ancestors, $currentNode->parent);
+            $currentNode = $currentNode->parent;
+        }
+
+        if ($node->type === NodeType::FOLDER->value) {
+            $ancestors[] = $node;
+        }
+
+        return $ancestors;
     }
 
     /**
