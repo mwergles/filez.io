@@ -55,6 +55,7 @@ const openFolder = ({ node }) => {
                             @end="onEnd"
                             ghost-class="ghost"
                             :class="{ 'cursor-no-drop': state.isValidDropTarget }"
+                            handle=".handle"
                         >
                             <template #item="{ element: node }">
                                 <tr
@@ -66,7 +67,7 @@ const openFolder = ({ node }) => {
                                     v-dbltap="() => openFolder({ node })"
                                     @dblclick="openFolder({ node })"
                                 >
-                                    <td class="pl-6 py-4">
+                                    <td class="pl-6 py-4 .handle">
                                         <NodeIcon :node="node" />
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ node.name }}</td>
