@@ -17,7 +17,7 @@ The project uses the following technologies:
 
 Follow the instructions below to set up and run the Filez.io project:
 
-1. Copy the `./env.example` file to `./.env` and update the environment variables if needed (note that you can run the application with de providex example).
+1. Copy the `./env.example` file to `./.env` and update the environment variables if needed (note that you can run the application with de provided example).
 
 2. Run the `./install.sh` script. This script will pull a Docker image to install the project dependencies using `composer install` and build the application.
 
