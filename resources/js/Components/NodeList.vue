@@ -4,6 +4,7 @@ import useNode from '@/composables/node'
 import useDraggable from '@/composables/draggable'
 import NodeIcon from '@/Components/NodeIcon.vue'
 import NodeActions from '@/Components/NodeActions.vue'
+import DragHandle from '@/Components/DragHandle.vue'
 import { formatBytes } from '@/lib/utils'
 
 const {
@@ -40,6 +41,7 @@ const openFolder = ({ node }) => {
                             class="border-b bg-neutral-800 font-medium text-white dark:border-neutral-500 dark:bg-neutral-900">
                         <tr>
                             <th scope="col" class="pl-6 py-4"></th>
+                            <th scope="col" class="pl-6 py-4"></th>
                             <th scope="col" class="px-6 py-4">Name</th>
                             <th scope="col" class="px-6 py-4">Size</th>
                             <th scope="col" class="px-2 py-4"></th>
@@ -59,7 +61,7 @@ const openFolder = ({ node }) => {
                         >
                             <template #item="{ element: node }">
                                 <tr
-                                    class="group border-b dark:border-neutral-500 cursor-grab hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                    class="group border-b dark:border-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                                     :class="{
                                     dragging: state.draggingId && state.draggingId === node.id,
                                     'cursor-no-drop': state.isValidDropTarget,
@@ -67,6 +69,9 @@ const openFolder = ({ node }) => {
                                     v-dbltap="() => openFolder({ node })"
                                     @dblclick="openFolder({ node })"
                                 >
+                                    <td class="handle">
+                                        <DragHandle />
+                                    </td>
                                     <td class="pl-6 py-4 .handle">
                                         <NodeIcon :node="node" />
                                     </td>
@@ -74,9 +79,7 @@ const openFolder = ({ node }) => {
                                     <td class="whitespace-nowrap px-6 py-4">{{ node.size ? formatBytes(node.size) : '--' }}</td>
                                     <td class="whitespace-nowrap px-2 py-4">
                                         <div class="md:invisible group-hover:visible">
-                                            <NodeActions
-                                                :node="node"
-                                            />
+                                            <NodeActions :node="node" />
                                         </div>
                                     </td>
                                 </tr>
