@@ -22,21 +22,21 @@ class NodeController extends Controller
      * @param NodeService $service
      */
     public function __construct(private readonly NodeService $service)
-    {
-
-    }
+    {}
 
     /**
-     * Return a listing of the resource.
+     * Return a listing of the nodes along with the current path.
      * @param IndexRequest $request
      * @param $parentId
      * @return ApiResource
      */
     public function index(IndexRequest $request, $parentId = null): ApiResource
     {
-        return new ApiResource(
-            $this->service->listNodes($request->user()->id, $parentId)
-        );
+        $userId = $request->user()->id;
+        $nodes = $this->service->listNodes($userId, $parentId);
+        $path = $parentId ? $this->service->getNodeAncestors($parentId, $userId) : [];
+
+        return new ApiResource(compact('nodes', 'path'));
     }
 
     /**

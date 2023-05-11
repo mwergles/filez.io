@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\NodeType;
 use App\Exceptions\StorageException;
 use App\Models\Node;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -18,9 +19,9 @@ class NodeService
      * List all nodes of a user.
      * @param string $userId
      * @param string|null $parentId
-     * @return array
+     * @return Collection
      */
-    public function listNodes(string $userId, ?string $parentId = null): array
+    public function listNodes(string $userId, ?string $parentId = null): Collection
     {
         $nodes = Node::select('nodes.*', DB::raw('COUNT(child_nodes.id) AS length'))
             ->leftJoin('nodes AS child_nodes', 'nodes.id', '=', 'child_nodes.parent_id')
@@ -40,9 +41,7 @@ class NodeService
             ]);
         }
 
-        $ancestors = $parentId ? $this->getNodeAncestors($parentId, $userId) : collect();
-
-        return ['nodes' => $nodes, 'path' => $ancestors];
+        return $nodes;
     }
 
     /**
@@ -161,7 +160,7 @@ class NodeService
      * @param string $nodeId
      * @return array
      */
-    private function getNodeAncestors (string $nodeId, string $userId): array
+    public function getNodeAncestors(string $nodeId, string $userId): array
     {
         $query = <<<EOT
 WITH RECURSIVE parent_hierarchy AS (
