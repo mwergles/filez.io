@@ -10,9 +10,9 @@ const selectFile = () => {
     fileInput.value.click()
 }
 
-const uploadFile = () => {
-    console.log('Upload files', fileInput.value.files[0])
-    _uploadFile({ file: fileInput.value.files[0] })
+const uploadFile = async () => {
+    await _uploadFile({ file: fileInput.value.files[0] })
+    fileInput.value.value = ''
 }
 </script>
 

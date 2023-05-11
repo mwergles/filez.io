@@ -94,7 +94,7 @@ export default function useNode () {
             await nodeApi.uploadFile({ file, targetId })
             await loadNodesForPath({ nodeId: targetId })
         } catch (e) {
-            setError(`Failed to create folder ${name}`)
+            setError(`Failed to upload ${name}`)
             console.error(e)
         } finally {
             loading.value = false

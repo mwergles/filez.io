@@ -15,8 +15,6 @@ const {
     path,
     moveNode,
 } = useNode()
-
-console.log(nodes.value)
 </script>
 
 <template>

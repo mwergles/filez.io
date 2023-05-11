@@ -11,7 +11,6 @@ function detectDoubleTap ({ onDbltap } = {}) {
         if (tapLen < DOUBLE_TAP_INTERVAL && tapLen > 0) {
             event.preventDefault()
             onDbltap?.()
-            console.log('Double tapped!')
         } else {
             timeout = setTimeout(() => {
                 clearTimeout(timeout)
