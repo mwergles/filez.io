@@ -7,7 +7,7 @@ import BreadcumbItem from '@/Components/BreadcumbItem.vue'
 
 const { navigateToNode, path } = useNode()
 
-const lastNode = computed(() => path[path.length - 1])
+const lastNode = computed(() => path.value[path.value.length - 1])
 </script>
 
 <template>
@@ -31,7 +31,7 @@ const lastNode = computed(() => path[path.length - 1])
     >
         /
         <BreadcumbLink
-            v-if="node !== lastNode"
+            v-if="node.id !== lastNode?.id"
             :node="node"
             @navigateToNode="navigateToNode({ node })"
         />
