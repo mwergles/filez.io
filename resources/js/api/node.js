@@ -37,12 +37,6 @@ export default {
         return data.data
     },
 
-    async getPath ({ nodeId }) {
-        const { data } = await axios.get(`/api/node/path/${nodeId ?? ''}`)
-
-        return data.data
-    },
-
     async renameNode ({ nodeId, name }) {
         const { data } = await axios.patch(`/api/node/${nodeId}`, { name })
 
