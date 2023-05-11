@@ -1,6 +1,6 @@
 <script setup>
-import useNode from '@/composables/node'
-import IconButton from './IconButton.vue'
+import useNode from '@/composables/node.composable'
+import IconButton from '@/Components/UI/IconButton.vue'
 import MoveNodeUpIcon from '@icons/move-up.svg'
 
 const { moveNode } = useNode()

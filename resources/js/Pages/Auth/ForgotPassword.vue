@@ -1,35 +1,36 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { Head, useForm } from '@inertiajs/vue3'
+import AuthenticationCard from '@/Components/Auth/AuthenticationCard.vue'
+import AuthenticationCardLogo from '@/Components/Auth/AuthenticationCardLogo.vue'
+import InputError from '@/Components/Form/InputError.vue'
+import InputLabel from '@/Components/Form/InputLabel.vue'
+import TextInput from '@/Components/Form/TextInput.vue'
+import PrimaryButton from '@/Components/UI/PrimaryButton.vue'
 
 defineProps({
     status: String,
-});
+})
 
 const form = useForm({
     email: '',
-});
+})
 
 const submit = () => {
-    form.post(route('password.email'));
-};
+    form.post(route('password.email'))
+}
 </script>
 
 <template>
-    <Head title="Forgot Password" />
+    <Head title="Forgot Password"/>
 
     <AuthenticationCard>
         <template #logo>
-            <AuthenticationCardLogo />
+            <AuthenticationCardLogo/>
         </template>
 
         <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
+            Forgot your password? No problem. Just let us know your email address and we will email you a password reset
+            link that will allow you to choose a new one.
         </div>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
@@ -38,17 +39,17 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="Email"/>
                 <TextInput
                     id="email"
                     v-model="form.email"
-                    type="email"
+                    autocomplete="username"
+                    autofocus
                     class="mt-1 block w-full"
                     required
-                    autofocus
-                    autocomplete="username"
+                    type="email"
                 />
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError :message="form.errors.email" class="mt-2"/>
             </div>
 
             <div class="flex items-center justify-end mt-4">

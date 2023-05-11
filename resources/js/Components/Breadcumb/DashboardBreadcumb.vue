@@ -1,9 +1,9 @@
 <script setup>
 import { computed } from 'vue'
-import useNode from '@/composables/node'
+import useNode from '@/composables/node.composable'
 import { APP_NAME } from '@/constants'
-import BreadcumbLink from '@/Components/BreadcumbLink.vue'
-import BreadcumbItem from '@/Components/BreadcumbItem.vue'
+import BreadcumbLink from '@/Components/Breadcumb/BreadcumbLink.vue'
+import BreadcumbItem from '@/Components/Breadcumb/BreadcumbItem.vue'
 
 const { navigateToNode, path } = useNode()
 

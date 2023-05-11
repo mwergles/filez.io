@@ -1,10 +1,10 @@
 <script setup>
 import Draggable from 'vuedraggable'
-import useNode from '@/composables/node'
-import useDraggable from '@/composables/draggable'
-import NodeIcon from '@/Components/NodeIcon.vue'
-import NodeActions from '@/Components/NodeActions.vue'
-import DragHandle from '@/Components/DragHandle.vue'
+import useNode from '@/composables/node.composable'
+import useDraggable from '@/composables/draggable.composable'
+import NodeIcon from '@/Components/Node/UI/NodeIcon.vue'
+import NodeActions from '@/Components/Node/NodeActions.vue'
+import DragHandle from '@/Components/UI/DragHandle.vue'
 import { formatBytes } from '@/lib/utils'
 
 const {

@@ -1,5 +1,5 @@
 <script setup>
-import LightningsIcon from '@icons/lightnings-flash.svg';
+import LightningsIcon from '@icons/logo.svg';
 </script>
 
 <template>

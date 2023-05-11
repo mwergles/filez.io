@@ -1,6 +1,6 @@
 <script setup>
 import FolderIcon from '@icons/folder.svg'
-import FileIcon from '@/Components/FileIcon.vue'
+import FileIcon from '@/Components/Node/UI/FileIcon.vue'
 
 const props = defineProps({
     node: {

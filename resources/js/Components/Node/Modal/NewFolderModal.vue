@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import PrimaryButton from './PrimaryButton.vue'
-import DialogModal from './DialogModal.vue'
+import PrimaryButton from '@/Components/UI/PrimaryButton.vue'
+import DialogModal from '@/Components/Modal/DialogModal.vue'
 
 const props = defineProps({
     show: {

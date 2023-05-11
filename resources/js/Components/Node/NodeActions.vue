@@ -1,8 +1,8 @@
 <script setup>
-import DownloadFileButton from '@/Components/DownloadFileButton.vue'
-import DeleteNodeButton from '@/Components/DeleteNodeButton.vue'
-import RenameNodeButton from '@/Components/RenameNodeButton.vue'
-import MoveNodeUpButton from '@/Components/MoveNodeUpButton.vue'
+import DownloadFileButton from '@/Components/Node/Button/DownloadFileButton.vue'
+import DeleteNodeButton from '@/Components/Node/Button/DeleteNodeButton.vue'
+import RenameNodeButton from '@/Components/Node/Button/RenameNodeButton.vue'
+import MoveNodeUpButton from '@/Components/Node/Button/MoveNodeUpButton.vue'
 
 const props = defineProps({
     node: {

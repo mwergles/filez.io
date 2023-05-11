@@ -1,6 +1,6 @@
 import { ref } from 'vue'
-import useError from '@/composables/error'
-import nodeApi from '@/api/node'
+import useError from '@/composables/error.composable'
+import nodeApi from '@/api/node.api'
 
 // shared state
 const currentNodeId = ref(null)

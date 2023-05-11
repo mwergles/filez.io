@@ -5,19 +5,19 @@ import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m'
-import dbltap from '@/directives/dbltap'
+import dbltap from '@/directives/dbltap.directive'
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel'
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
-    setup({ el, App, props, plugin }) {
+    setup ({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .directive('dbltap', dbltap)
-            .mount(el);
+            .mount(el)
     },
     progress: {
         color: '#4B5563',

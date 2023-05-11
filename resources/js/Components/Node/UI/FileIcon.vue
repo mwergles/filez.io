@@ -26,8 +26,9 @@ const props = defineProps({
 </script>
 
 <template>
-    <Component :is="fileTypesMapping[node.mime_type] ?? GenericFileIcon"
-        class="h-8 w-8"
+    <Component
         v-if="node.type === 'file'"
+        :is="fileTypesMapping[node.mime_type] ?? GenericFileIcon"
+        class="h-8 w-8"
     />
 </template>

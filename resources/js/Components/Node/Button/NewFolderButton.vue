@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import useNode from '@/composables/node'
-import PrimaryButton from '@/Components/PrimaryButton.vue'
-import NewFolderModal from '@/Components/NewFolderModal.vue'
+import useNode from '@/composables/node.composable'
+import PrimaryButton from '@/Components/UI/PrimaryButton.vue'
+import NewFolderModal from '@/Components/Node/Modal/NewFolderModal.vue'
 
 const { createFolder: _createFolder } = useNode()
 

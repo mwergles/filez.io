@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, watchEffect } from 'vue'
 import { capitalizeFirstLetter } from '@/lib/utils'
-import PrimaryButton from '@/Components/PrimaryButton.vue'
-import DialogModal from '@/Components/DialogModal.vue'
+import PrimaryButton from '@/Components/UI/PrimaryButton.vue'
+import DialogModal from '@/Components/Modal/DialogModal.vue'
 
 const props = defineProps({
   show: {

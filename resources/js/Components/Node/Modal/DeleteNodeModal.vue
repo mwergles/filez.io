@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
-import ConfirmationModal from '@/Components/ConfirmationModal.vue'
-import SecondaryButton from '@/Components/SecondaryButton.vue'
-import DangerButton from '@/Components/DangerButton.vue'
+import ConfirmationModal from '@/Components/Modal/ConfirmationModal.vue'
+import SecondaryButton from '@/Components/UI/SecondaryButton.vue'
+import DangerButton from '@/Components/UI/DangerButton.vue'
 import { capitalizeFirstLetter } from '@/lib/utils'
 
 const props = defineProps({

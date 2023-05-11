@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import useNode from '@/composables/node'
-import IconButton from './IconButton.vue'
+import useNode from '@/composables/node.composable'
 import DeleteIcon from '@icons/delete.svg'
-import DeleteNodeModal from '@/Components/DeleteNodeModal.vue'
+import IconButton from '@/Components/UI/IconButton.vue'
+import DeleteNodeModal from '@/Components/Node/Modal/DeleteNodeModal.vue'
 
 const { deleteNode } = useNode()
 

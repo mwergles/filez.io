@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import useNode from '@/composables/node'
-import PrimaryButton from './PrimaryButton.vue'
+import useNode from '@/composables/node.composable'
+import PrimaryButton from '@/Components/UI/PrimaryButton.vue'
 
 const { uploadFile: _uploadFile } = useNode()
 const fileInput = ref(null)

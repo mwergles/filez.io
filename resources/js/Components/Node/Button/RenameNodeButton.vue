@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import useNode from '@/composables/node'
-import IconButton from './IconButton.vue'
+import useNode from '@/composables/node.composable'
 import EditIcon from '@icons/edit.svg'
-import RenameNodeModal from '@/Components/RenameNodeModal.vue'
+import IconButton from '@/Components/UI/IconButton.vue'
+import RenameNodeModal from '@/Components/Node/Modal/RenameNodeModal.vue'
 
 const { renameNode: _renameNode } = useNode()
 

@@ -1,5 +1,5 @@
 <script setup>
-import IconButton from './IconButton.vue'
+import IconButton from '@/Components/UI/IconButton.vue'
 import DownloadIcon from '@icons/download.svg'
 
 const props = defineProps({

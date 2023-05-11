@@ -1,5 +1,5 @@
-import { ref, computed, reactive } from 'vue'
-import useNode from '@/composables/node'
+import { computed, reactive } from 'vue'
+import useNode from '@/composables/node.composable'
 
 const { moveNode, nodes } = useNode()
 let nodeBeingMoved = null

@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, watch, watchEffect } from 'vue'
 import { usePage } from '@inertiajs/vue3'
-import useError from '@/composables/error'
+import useError from '@/composables/error.composable'
 
 const show = ref(true)
 const style = computed(() => {

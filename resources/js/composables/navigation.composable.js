@@ -1,9 +1,26 @@
-import { onMounted, ref, watch } from 'vue'
-import { getNodeIdFromUrl, updateUrlPath } from '@/lib/utils'
-import useNode from '@/composables/node'
+import { onMounted, watch } from 'vue'
+import useNode from '@/composables/node.composable'
 
 export default function useNavigation () {
     const { loadNodesForPath, currentNodeId } = useNode()
+
+    function getNodeIdFromUrl () {
+        const urlParams = new URLSearchParams(window.location.search)
+
+        return urlParams.get('path')
+    }
+
+    function updateUrlPath (nodeId) {
+        const url = new URL(window.location)
+
+        if (nodeId) {
+            url.searchParams.set('path', nodeId)
+        } else {
+            url.searchParams.delete('path')
+        }
+
+        window.history.pushState({}, '', url.href)
+    }
 
     onMounted(async () => {
         // get the current node id from the url query string
