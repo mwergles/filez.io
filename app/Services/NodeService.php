@@ -168,12 +168,20 @@ class NodeService
         $ancestors = [];
         $currentNode = $node;
         while ($currentNode->parent) {
-            array_unshift($ancestors, $currentNode->parent);
+            $ancestor = [
+                'id' => $currentNode->parent->id,
+                'name' => $currentNode->parent->name,
+            ];
+
+            array_unshift($ancestors, $ancestor);
             $currentNode = $currentNode->parent;
         }
 
         if ($node->type === NodeType::FOLDER->value) {
-            $ancestors[] = $node;
+            $ancestors[] = [
+                'id' => $node->id,
+                'name' => $node->name,
+            ];
         }
 
         return $ancestors;

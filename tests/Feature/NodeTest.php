@@ -46,6 +46,8 @@ class NodeTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->actingAs($user = User::factory()->create());
+
+        // the session last activity is used to the temporary download urls
         DB::table('sessions')->insert([
             'id' => 'test',
             'user_id' => $user->id,
@@ -89,6 +91,31 @@ class NodeTest extends TestCase
         $response->assertSee($node->name);
         $response->assertDontSee($grandChildNode->name);
         $response->assertDontSee($notSiblingNode->name);
+    }
+
+    public function test_nodes_path_have_a_valid_order()
+    {
+        $this->withoutExceptionHandling();
+        $this->actingAs($user = User::factory()->create());
+
+        $node4 = Node::create(['name' => 'Node 4', 'user_id' => $user->id, 'type' => 'folder']);
+        $node3 = Node::create(['name' => 'Node 3', 'parent_id' => $node4->id, 'user_id' => $user->id, 'type' => 'folder']);
+        $node2 = Node::create(['name' => 'Node 2', 'parent_id' => $node3->id, 'user_id' => $user->id, 'type' => 'folder']);
+        $node1 = Node::create(['name' => 'Node 1', 'parent_id' => $node2->id, 'user_id' => $user->id, 'type' => 'folder']);
+
+        $response = $this->getJson('/api/node/' . $node1->id);
+
+        $response->assertJson([
+            'data' => [
+                'nodes' => [],
+                'path' => [
+                    ['id' => $node4->id, 'name' => 'Node 4'],
+                    ['id' => $node3->id, 'name' => 'Node 3'],
+                    ['id' => $node2->id, 'name' => 'Node 2'],
+                    ['id' => $node1->id, 'name' => 'Node 1'],
+                ],
+            ],
+        ]);
     }
 
     public function test_nodes_can_be_moved_to_a_new_parent_folder()
