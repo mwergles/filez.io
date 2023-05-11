@@ -38,6 +38,8 @@ class NodeTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee($node->name);
+        $response->assertSee('nodes');
+        $response->assertSee('path');
     }
 
     public function test_nodes_can_be_retrieved_from_a_parent()
@@ -58,6 +60,18 @@ class NodeTest extends TestCase
             'type' => 'folder',
         ]);
 
+        $childDirectory = $user->nodes()->create([
+            'name' => 'Child Directory',
+            'type' => 'folder',
+            'parent_id' => $parentNode->id,
+        ]);
+
+        $grandChildNode = $user->nodes()->create([
+            'name' => 'Grand Child Node',
+            'type' => 'folder',
+            'parent_id' => $childDirectory->id,
+        ]);
+
         $node = Node::factory()->create([
             'name' => 'Child Node',
             'user_id' => $user->id,
@@ -73,7 +87,7 @@ class NodeTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee($node->name);
-        $response->assertDontSee($parentNode->name);
+        $response->assertDontSee($grandChildNode->name);
         $response->assertDontSee($notSiblingNode->name);
     }
 

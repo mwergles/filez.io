@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Node\AncestorsRequest;
 use App\Http\Requests\Node\CreateFolderRequest;
 use App\Http\Requests\Node\DeleteRequest;
 use App\Http\Requests\Node\FileUploadRequest;
@@ -28,7 +27,7 @@ class NodeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Return a listing of the resource.
      * @param IndexRequest $request
      * @param $parentId
      * @return ApiResource
@@ -37,19 +36,6 @@ class NodeController extends Controller
     {
         return new ApiResource(
             $this->service->listNodes($request->user()->id, $parentId)
-        );
-    }
-
-    /**
-     * Return the parents list of a node.
-     * @param AncestorsRequest $request
-     * @param $id
-     * @return ApiResource
-     */
-    public function getNodeAncestors(AncestorsRequest $request, $id): ApiResource
-    {
-        return new ApiResource(
-            $this->service->getNodeAncestors($id, $request->user()->id)
         );
     }
 

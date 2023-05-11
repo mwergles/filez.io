@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Enums\NodeType;
 use App\Exceptions\StorageException;
 use App\Models\Node;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -19,14 +18,17 @@ class NodeService
      * List all nodes of a user.
      * @param string $userId
      * @param string|null $parentId
-     * @return Collection
+     * @return array
      */
-    public function listNodes(string $userId, ?string $parentId = null): Collection
+    public function listNodes(string $userId, ?string $parentId = null): array
     {
-        $nodes = Node::where('user_id', $userId)
-            ->where('parent_id', $parentId)
-            ->orderByRaw('CASE WHEN type = ? THEN 1 ELSE 2 END', [NodeType::FOLDER->value])
-            ->orderBy('created_at')
+        $nodes = Node::select('nodes.*', DB::raw('COUNT(child_nodes.id) AS length'))
+            ->leftJoin('nodes AS child_nodes', 'nodes.id', '=', 'child_nodes.parent_id')
+            ->where('nodes.user_id', $userId)
+            ->where('nodes.parent_id', $parentId)
+            ->groupBy('nodes.id')
+            ->orderByRaw('CASE WHEN nodes.type = ? THEN 1 ELSE 2 END', [NodeType::FOLDER->value])
+            ->orderBy('nodes.created_at')
             ->get();
 
         $temporaryUrlExpirationTime = $this->getSessionRemainingTime($userId);
@@ -38,7 +40,9 @@ class NodeService
             ]);
         }
 
-        return $nodes;
+        $ancestors = $parentId ? $this->getNodeAncestors($parentId, $userId) : collect();
+
+        return ['nodes' => $nodes, 'path' => $ancestors];
     }
 
     /**
@@ -157,7 +161,7 @@ class NodeService
      * @param string $nodeId
      * @return array
      */
-    public function getNodeAncestors (string $nodeId, string $userId): array
+    private function getNodeAncestors (string $nodeId, string $userId): array
     {
         $query = <<<EOT
 WITH RECURSIVE parent_hierarchy AS (

@@ -21,7 +21,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/node/{parentId?}', [NodeController::class, 'index']);
-    Route::get('/node/path/{id}', [NodeController::class, 'getNodeAncestors']);
     Route::post('/node/folder', [NodeController::class, 'createFolder']);
     Route::post('/node/file', [NodeController::class, 'uploadFile']);
     Route::patch('/node/move/', [NodeController::class, 'moveNode']);
