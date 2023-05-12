@@ -12,24 +12,43 @@ The project uses the following technologies:
 - MySQL: A popular open-source relational database management system.
 - MinIO: A high-performance object storage system, used as a local bucket storage.
 - Nginx: A web server and reverse proxy server used to handle routing and serve the application.
+- Mailpit: A fake SMTP server for testing emails.
 
 ## Getting Started
+
+### Prerequisites
+
+- Docker and Docker Compose
+- bash for running the `install.sh` script
 
 Follow the instructions below to set up and run the Filez.io project:
 
 1. Copy the `./env.example` file to `./.env` and update the environment variables if needed (note that you can run the application with de provided example).
 
 2. Run the `./install.sh` script. This script will pull a Docker image to install the project dependencies using `composer install` and build the application.
+The script will attempt to run the sudo command at the end of the process to reset the project permissions.
 
 3. Start the application by running `./vendor/bin/sail up`. This command will start all the containers and create the MinIO bucket for file storage.
 
 4. Run the database migrations by executing `./vendor/bin/sail artisan migrate`. This will set up the necessary database tables.
 
-5. Access the project by opening your web browser and visiting [http://localhost:80](http://localhost:80).
+5. Optionally, you can run the database seeder to create a test user by running `./vendor/bin/sail artisan db:seed`.
+It will create a user with the following credentials:
 
-Please note that the application will be accessible at `http://localhost`, which is configured through Nginx. Additionally, you can access the MinIO storage at `http://static.localhost`, which is also handled by Nginx.
+    - Email: `test@example.com`
+    - Password: `password`
 
-Feel free to explore and utilize Filez.io for your personal file storage needs. Enjoy the convenience and simplicity it offers!
+6. Access the project by opening your web browser and visiting [http://localhost:80](http://localhost:80).
+
+Please note that the application will be accessible at `http://localhost`, which is configured through Nginx.
+Additionally, you can access the MinIO storage at `http://static.localhost`, which is also handled by Nginx.
+
+You can view the sent emails in Mailpit by visiting http://localhost:8025. Note that it is used only for the password recovery feature.
+
+# Testing
+
+The project uses PHPUnit for testing. You can run the tests by executing `./vendor/bin/sail artisan test`.
+And you can run the tests with coverage by running `./vendor/bin/sail artisan test --coverage-html ./coverage`.
 
 # Screenshots
 
