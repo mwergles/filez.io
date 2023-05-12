@@ -1,3 +1,5 @@
+import axios from '@/lib/http'
+
 export default {
     async getNodes ({ nodeId = null }) {
         const { data } = await axios.get(`/api/node/${nodeId ?? ''}`)

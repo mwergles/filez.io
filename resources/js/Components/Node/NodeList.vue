@@ -63,16 +63,16 @@ const openFolder = ({ node }) => {
                                 <tr
                                     class="group border-b dark:border-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                                     :class="{
-                                    dragging: state.draggingId && state.draggingId === node.id,
-                                    'cursor-no-drop': state.isValidDropTarget,
-                                }"
+                                        dragging: state.draggingId && state.draggingId === node.id,
+                                        'cursor-pointer': node.type === 'folder',
+                                    }"
                                     v-dbltap="() => openFolder({ node })"
                                     @dblclick="openFolder({ node })"
                                 >
                                     <td class="handle">
                                         <DragHandle />
                                     </td>
-                                    <td class="pl-6 py-4 .handle">
+                                    <td class="pl-6 py-4">
                                         <NodeIcon :node="node" />
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ node.name }}</td>

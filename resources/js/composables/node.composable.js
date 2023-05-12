@@ -18,9 +18,9 @@ export default function useNode () {
 
             nodes.value = _nodes
             path.value = _path
-        } catch (e) {
-            setError('Failed to browse files')
-            console.error(e)
+        } catch (error) {
+            setError({ message: 'Failed to browse files', error })
+            console.error(error)
         }
     }
 
@@ -35,9 +35,9 @@ export default function useNode () {
             currentNodeId.value = node?.id
 
             await loadNodesForPath({ nodeId: node?.id })
-        } catch (e) {
-            setError('Failed to navigate')
-            console.error(e)
+        } catch (error) {
+            setError({ message: 'Failed to navigate', error })
+            console.error(error)
         } finally {
             loading.value = false
         }
@@ -53,9 +53,9 @@ export default function useNode () {
         try {
             await nodeApi.moveNode({ node, target })
             await loadNodesForPath({ nodeId: target ? currentNodeId.value : node.parent_id })
-        } catch (e) {
-            setError(`Failed to move ${node.type}`)
-            console.error(e)
+        } catch (error) {
+            setError({ message: `Failed to move ${node.type}`, error })
+            console.error(error)
         } finally {
             loading.value = false
         }
@@ -73,9 +73,9 @@ export default function useNode () {
 
             await nodeApi.createFolder({ name, targetId })
             await loadNodesForPath({ nodeId: targetId })
-        } catch (e) {
-            setError(`Failed to create folder ${name}`)
-            console.error(e)
+        } catch (error) {
+            setError({ message: `Failed to create folder ${name}`, error })
+            console.error(error)
         } finally {
             loading.value = false
         }
@@ -93,9 +93,9 @@ export default function useNode () {
 
             await nodeApi.uploadFile({ file, targetId })
             await loadNodesForPath({ nodeId: targetId })
-        } catch (e) {
-            setError(`Failed to upload ${name}`)
-            console.error(e)
+        } catch (error) {
+            setError({ message: `Failed to upload ${file.name}`, error })
+            console.error(error)
         } finally {
             loading.value = false
         }
@@ -111,9 +111,9 @@ export default function useNode () {
         try {
             await nodeApi.renameNode({ nodeId: node.id, name: newNodeName })
             await loadNodesForPath()
-        } catch (e) {
-            console.error(e)
-            setError(`Failed to rename ${node.type}`)
+        } catch (error) {
+            setError({ message: `Failed to rename ${node.type}`, error })
+            console.error(error)
         } finally {
             loading.value = false
         }
@@ -129,9 +129,9 @@ export default function useNode () {
         try {
             await nodeApi.deleteNode({ nodeId: node.id })
             await loadNodesForPath()
-        } catch (e) {
-            console.error(e)
-            setError(`Failed to delete ${node.type}`)
+        } catch (error) {
+            setError({ message: `Failed to delete ${node.type}`, error })
+            console.error(error)
         } finally {
             loading.value = false
         }
