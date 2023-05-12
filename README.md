@@ -31,6 +31,48 @@ Please note that the application will be accessible at `http://localhost`, which
 
 Feel free to explore and utilize Filez.io for your personal file storage needs. Enjoy the convenience and simplicity it offers!
 
+# Screenshots
+
+## Landing page
+<img src="./screenshots/landing-page.png" alt="Landing page">
+
+## Login screen
+<img src="./screenshots/login-page.png" alt="Login screen">
+
+## User register screen
+<img src="./screenshots/register.png" alt="User register screen">
+
+## Password recovery screen
+<img src="./screenshots/password-recovery-page.png" alt="Password recovery screen">
+
+## User's profile
+<img src="./screenshots/profile.png" alt="Profile">
+
+## User's dashboard
+<img src="./screenshots/dashboard.png" alt="User's dashboard">
+
+---
+<img src="./screenshots/file-listing.png" alt="User's dashboard files">
+
+---
+<img src="./screenshots/file-upload.png" alt="File upload">
+
+---
+<img src="./screenshots/renaming.png" alt="File renaming">
+
+---
+<img src="./screenshots/new-folder.png" alt="New folder">
+
+---
+<img src="./screenshots/exclusion.png" alt="File exclusion">
+
+---
+<img src="./screenshots/file-controls.png" alt="File controls">
+
+---
+<img src="./screenshots/nested-path.png" alt="Nest path">
+
+
 ## License
 
 This project is licensed under the [MIT License](https://opensource.org/license/mit/).
