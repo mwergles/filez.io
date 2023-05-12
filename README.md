@@ -45,6 +45,9 @@ Feel free to explore and utilize Filez.io for your personal file storage needs. 
 ## Password recovery screen
 <img src="./screenshots/password-recovery-page.png" alt="Password recovery screen">
 
+---
+<img src="./screenshots/password-recovery-email.png" alt="Password recovery email">
+
 ## User's profile
 <img src="./screenshots/profile.png" alt="Profile">
 
@@ -71,6 +74,9 @@ Feel free to explore and utilize Filez.io for your personal file storage needs. 
 
 ---
 <img src="./screenshots/nested-path.png" alt="Nest path">
+
+# Storage
+<img src="./screenshots/storage.png" alt="Storage files">
 
 
 ## License
